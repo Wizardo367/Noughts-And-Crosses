@@ -7,6 +7,7 @@ public class AdManager : MonoBehaviour
 	// Variables
 	private const string BannerId = "ca-app-pub-6762597481863539/6026430848";
 
+	// Singleton
 	private static AdManager _instance;
 	public static AdManager Instance
 	{
