@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum GameMode { Single, TwoPlayer }
@@ -17,7 +18,30 @@ public class Manager : MonoBehaviour
     private readonly Color _crossColour = new Color(0f, 114/255f, 188/255f);
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
-    public int XScore, OScore;
+    public static GameMode GameType = GameMode.Single;
+
+    private int _xScore;
+    public int XScore
+    {
+        get { return _xScore; }
+        set
+        {
+            // Update score and text
+            _xScore = value;
+            _xScoreText.text = _xScore.ToString();
+        }
+    }
+
+    private int _oScore;
+    public int OScore {
+        get { return _oScore; }
+        set
+        {
+            _oScore = value;
+            _oScoreText.text = _oScore.ToString();
+        }
+    }
+
     public Marker CurrentPlayer { get; private set; }
 
     private string _gameStatus;
@@ -32,15 +56,27 @@ public class Manager : MonoBehaviour
             _gameStatusText.text = _gameStatus;
             // Display text
             _gameStatusText.gameObject.SetActive(true);
+
+            // Update score
+            char winner = _gameStatus[0];
+
+            if (winner == 'C')
+                XScore++;
+            else if (winner == 'N')
+                OScore++;
+
+            // TODO Add button instead
+
+            // Next game
+            Invoke("NextGame", 2f);
         }
     }
-
-    public GameMode GameType = GameMode.Single;
 
     private void Start()
     {
         // Set variables
-        CurrentPlayer = Marker.Cross;
+        CurrentPlayer = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
+        SwapPlayer();
         _board = GameObject.Find("Board").GetComponent<Board>();
     }
 
@@ -51,7 +87,7 @@ public class Manager : MonoBehaviour
     {
         // Reset variables
         _gameStatusText.enabled = false;
-        CurrentPlayer = CurrentPlayer == Marker.Cross ? Marker.Nought : Marker.Cross;
+        SwapPlayer();
 
         // Check if everything needs to be reset
         if (resetAll)
@@ -69,9 +105,6 @@ public class Manager : MonoBehaviour
     /// </summary>
     public void NextGame()
     {
-        // Add to score
-
-
         // Reset game properties
         Wipe();
     }
@@ -82,9 +115,6 @@ public class Manager : MonoBehaviour
     /// <param name="singlePlayer"></param>
     public void NewGame(bool singlePlayer = true)
     {
-        // Check game mode
-        GameType = !singlePlayer ? GameMode.TwoPlayer : GameMode.Single;
-
         // Reset game manager
         Wipe(true);
     }

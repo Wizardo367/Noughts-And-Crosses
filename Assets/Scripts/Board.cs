@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public enum Marker { None, Cross, Nought }
@@ -9,6 +10,8 @@ public class Board : MonoBehaviour
     [SerializeField]
     private Manager _manager;
 
+    private BoardSpace[] _boardSpaces = new BoardSpace[9];
+
     private Sprite _crossSprite, _noughtSprite;
 
     public Marker[] Spaces = new Marker[9];
@@ -18,10 +21,22 @@ public class Board : MonoBehaviour
         // Get assets
         _crossSprite = Resources.Load<Sprite>("Images/cross");
         _noughtSprite = Resources.Load<Sprite>("Images/nought");
+
+        // Get board spaces
+        int childCounter = 0;
+        foreach (Transform child in transform)
+        {
+            _boardSpaces[childCounter] = child.GetComponent<BoardSpace>();
+            childCounter++;
+        }
     }
 
     public void DisplayMarker(int position)
     {
+        // Check if space is occupied
+        if (_boardSpaces[position].Occupied)
+            return;
+
         // Get child object
         Image boardSpaceImage = transform.GetChild(position).GetComponent<Image>();
 
@@ -36,6 +51,8 @@ public class Board : MonoBehaviour
             boardSpaceImage.color = Color.white;
             // Set space
             Spaces[position] = currentPlayer;
+            // Mark space as occupied
+            _boardSpaces[position].Occupied = true;
         }
 
         // Check for winner
@@ -47,11 +64,15 @@ public class Board : MonoBehaviour
 
     public void Clear()
     {
-        // Clear board images
+        // Clear board spaces
+        foreach (BoardSpace space in _boardSpaces)
+        {
+            space.Occupied = false;
+            space.Clear();
+        }
 
-
-        // Clear variables
-
+        // Reset spaces
+        Spaces = new Marker[9];
     }
 
     public void Evaluate()

@@ -31,6 +31,6 @@ public class AdManager : MonoBehaviour
 	public void Start()
 	{
 		// Load menu scene
-		SceneManager.LoadScene("Menu");
+		//SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
 	}
 }
