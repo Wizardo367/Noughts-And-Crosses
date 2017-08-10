@@ -18,6 +18,7 @@ public class Manager : MonoBehaviour
     private readonly Color _crossColour = new Color(0f, 114/255f, 188/255f);
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
+    public bool GameOver; 
     public static GameMode GameType = GameMode.Single;
 
     private int _xScore;
@@ -86,6 +87,7 @@ public class Manager : MonoBehaviour
     public void Wipe(bool resetAll = false)
     {
         // Reset variables
+        GameOver = false;
         _gameStatusText.enabled = false;
         SwapPlayer();
 
@@ -134,5 +136,15 @@ public class Manager : MonoBehaviour
             _currentPlayerText.color = _crossColour;
             _currentPlayerText.text = "Crosses";
         }
+    }
+
+    public void MuteAudio()
+    {
+        
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 }

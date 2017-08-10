@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public enum Marker { None, Cross, Nought }
@@ -33,8 +32,9 @@ public class Board : MonoBehaviour
 
     public void DisplayMarker(int position)
     {
-        // Check if space is occupied
-        if (_boardSpaces[position].Occupied)
+        /* Check if the game is already over
+           Check if space is occupied */
+        if (_manager.GameOver || _boardSpaces[position].Occupied)
             return;
 
         // Get child object
@@ -89,6 +89,7 @@ public class Board : MonoBehaviour
                 Spaces[i] == Spaces[i + 1] && Spaces[i + 1] == Spaces[i + 2])
             {
                 _manager.GameStatus = Spaces[i] + " Wins!";
+                _manager.GameOver = true;
                 return;
             }
 
@@ -98,6 +99,7 @@ public class Board : MonoBehaviour
                 Spaces[i] == Spaces[i + 3] && Spaces[i + 3] == Spaces[i + 6])
             {
                 _manager.GameStatus = Spaces[i] + " Wins!";
+                _manager.GameOver = true;
                 return;
             }
 
@@ -107,6 +109,7 @@ public class Board : MonoBehaviour
             Spaces[2] == Spaces[4] && Spaces[4] == Spaces[6]))
         {
             _manager.GameStatus = Spaces[4] + " Wins!";
+            _manager.GameOver = true;
             return;
         }
 
@@ -118,6 +121,9 @@ public class Board : MonoBehaviour
                 occupiedCounter++;
 
         if (occupiedCounter == 9)
+        {
             _manager.GameStatus = "Tie";
+            _manager.GameOver = true;
+        }
     }
 }

@@ -10,6 +10,7 @@ public class BoardSpace : MonoBehaviour
 
     private void Start()
     {
+        // Get components
         _image = GetComponent<Image>();
     }
 
