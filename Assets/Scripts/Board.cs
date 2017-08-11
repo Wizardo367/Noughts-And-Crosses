@@ -11,15 +11,14 @@ public class Board : MonoBehaviour
 
     private BoardSpace[] _boardSpaces = new BoardSpace[9];
 
-    private Sprite _crossSprite, _noughtSprite;
-
+    public static Sprite CrossSprite, NoughtSprite;
     public Marker[] Spaces = new Marker[9];
 
     private void Start()
     {
         // Get assets
-        _crossSprite = Resources.Load<Sprite>("Images/cross");
-        _noughtSprite = Resources.Load<Sprite>("Images/nought");
+        CrossSprite = Resources.Load<Sprite>("Images/cross");
+        NoughtSprite = Resources.Load<Sprite>("Images/nought");
 
         // Get board spaces
         int childCounter = 0;
@@ -30,30 +29,21 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void DisplayMarker(int position)
+    public void PlaceMarker(int position)
     {
+        BoardSpace currentBoardSpace = _boardSpaces[position];
+
         /* Check if the game is already over
            Check if space is occupied */
-        if (_manager.GameOver || _boardSpaces[position].Occupied)
+        if (_manager.GameOver || currentBoardSpace.Occupied)
             return;
 
-        // Get child object
-        Image boardSpaceImage = transform.GetChild(position).GetComponent<Image>();
-
-        // Display marker
+        // Place marker
         Marker currentPlayer = _manager.CurrentPlayer;
 
-        if (currentPlayer != Marker.None)
-        {
-            // Set sprite
-            boardSpaceImage.sprite = currentPlayer == Marker.Cross ? _crossSprite : _noughtSprite;
-            // Set colour
-            boardSpaceImage.color = Color.white;
-            // Set space
+        // Set space
+        if (currentBoardSpace.PlaceMarker(currentPlayer))
             Spaces[position] = currentPlayer;
-            // Mark space as occupied
-            _boardSpaces[position].Occupied = true;
-        }
 
         // Check for winner
         Evaluate();
