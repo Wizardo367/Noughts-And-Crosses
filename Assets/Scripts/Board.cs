@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 
 public enum Marker { None, Cross, Nought }
@@ -8,6 +9,11 @@ public class Board : MonoBehaviour
     // Variables
     [SerializeField]
     private Manager _manager;
+
+    [SerializeField]
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _clearBoardSound;
 
     private BoardSpace[] _boardSpaces = new BoardSpace[9];
 
@@ -63,6 +69,10 @@ public class Board : MonoBehaviour
 
         // Reset spaces
         Spaces = new Marker[9];
+
+        // Play sound effect
+        _audioSource.clip = _clearBoardSound;
+        _audioSource.Play();
     }
 
     public void Evaluate()
@@ -78,8 +88,7 @@ public class Board : MonoBehaviour
             if ((Spaces[i] == Marker.Cross || Spaces[i] == Marker.Nought) &&
                 Spaces[i] == Spaces[i + 1] && Spaces[i + 1] == Spaces[i + 2])
             {
-                _manager.GameStatus = Spaces[i] + " Wins!";
-                _manager.GameOver = true;
+                GameOver(Spaces[i] + " Wins!");
                 return;
             }
 
@@ -88,8 +97,7 @@ public class Board : MonoBehaviour
             if ((Spaces[i] == Marker.Cross || Spaces[i] == Marker.Nought) &&
                 Spaces[i] == Spaces[i + 3] && Spaces[i + 3] == Spaces[i + 6])
             {
-                _manager.GameStatus = Spaces[i] + " Wins!";
-                _manager.GameOver = true;
+                GameOver(Spaces[i] + " Wins!");
                 return;
             }
 
@@ -98,22 +106,20 @@ public class Board : MonoBehaviour
             (Spaces[0] == Spaces[4] && Spaces[4] == Spaces[8] ||
             Spaces[2] == Spaces[4] && Spaces[4] == Spaces[6]))
         {
-            _manager.GameStatus = Spaces[4] + " Wins!";
-            _manager.GameOver = true;
+            GameOver(Spaces[4] + " Wins!");
             return;
         }
 
         // Check for draw
-        int occupiedCounter = 0;
-
-        for (int i = 0; i < 9; i++)
-            if (Spaces[i] == Marker.Cross || Spaces[i] == Marker.Nought)
-                occupiedCounter++;
+        int occupiedCounter = Spaces.Count(marker => marker == Marker.Cross || marker == Marker.Nought);
 
         if (occupiedCounter == 9)
-        {
-            _manager.GameStatus = "Tie";
-            _manager.GameOver = true;
-        }
+            GameOver("Tie");
+    }
+
+    private void GameOver(string msg)
+    {
+        _manager.GameStatus = msg;
+        _manager.GameOver = true;
     }
 }

@@ -9,7 +9,12 @@ public class BoardSpace : MonoBehaviour
 
     private Animator _animator;
     private Image _image;
-    
+
+    [SerializeField]
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _placementSound;
+
     private void Start()
     {
         // Get components
@@ -31,14 +36,19 @@ public class BoardSpace : MonoBehaviour
     {
         if (marker != Marker.None)
         {
+            // Set marker type
+            Marker = marker;
             // Set sprite
-            _image.sprite = marker == Marker.Cross ? Board.CrossSprite : Board.NoughtSprite;
+            _image.sprite = Marker == Marker.Cross ? Board.CrossSprite : Board.NoughtSprite;
             // Set colour
             _image.color = Color.white;
             // Set space as occupied
             Occupied = true;
             // Set animation
             _animator.SetBool("markerPlace", true);
+            // Play sound effect
+            _audioSource.clip = _placementSound;
+            _audioSource.Play();
 
             return true;
         }

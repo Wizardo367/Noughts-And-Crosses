@@ -12,6 +12,10 @@ public class Manager : MonoBehaviour
     [SerializeField] private Text _currentPlayerText;
     [SerializeField] private Text _gameStatusText;
 
+    [SerializeField] private Button _audioButton;
+
+    private AudioSource _audioSource;
+
     // Game Variables
     private Board _board;
 
@@ -55,6 +59,8 @@ public class Manager : MonoBehaviour
             _gameStatus = value;
             // Update text
             _gameStatusText.text = _gameStatus;
+            // Enable variable
+            _gameStatusText.enabled = true;
             // Display text
             _gameStatusText.gameObject.SetActive(true);
 
@@ -66,8 +72,6 @@ public class Manager : MonoBehaviour
             else if (winner == 'N')
                 OScore++;
 
-            // TODO Add button instead
-
             // Next game
             Invoke("NextGame", 2f);
         }
@@ -78,6 +82,9 @@ public class Manager : MonoBehaviour
         // Set variables
         CurrentPlayer = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
         SwapPlayer();
+
+        // Get components
+        _audioSource = GetComponent<AudioSource>();
         _board = GameObject.Find("Board").GetComponent<Board>();
     }
 
@@ -138,9 +145,14 @@ public class Manager : MonoBehaviour
         }
     }
 
-    public void MuteAudio()
+    public void ToggleAudio()
     {
-        
+        // Mute/unmute audio source
+        bool muted = !_audioSource.mute;
+        _audioSource.mute = muted;
+
+        // Toggle button colour
+        _audioButton.image.color = muted ? Color.grey : Color.white;
     }
 
     public void ReturnToMenu()
