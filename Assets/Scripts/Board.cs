@@ -40,7 +40,8 @@ public class Board : MonoBehaviour
         BoardSpace currentBoardSpace = _boardSpaces[position];
 
         /* Check if the game is already over
-           Check if space is occupied */
+           Check if space is occupied
+           Check if the clear animation has completed */
         if (_manager.GameOver || currentBoardSpace.Occupied)
             return;
 
@@ -50,6 +51,8 @@ public class Board : MonoBehaviour
         // Set space
         if (currentBoardSpace.PlaceMarker(currentPlayer))
             Spaces[position] = currentPlayer;
+        else
+            return;
 
         // Check for winner
         Evaluate();
