@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
 
 public enum Marker { None, Cross, Nought }
 
@@ -46,11 +45,11 @@ public class Board : MonoBehaviour
             return;
 
         // Place marker
-        Marker currentPlayer = _manager.CurrentPlayer;
+        Marker currentPlayerMarker = _manager.CurrentPlayer.Marker;
 
         // Set space
-        if (currentBoardSpace.PlaceMarker(currentPlayer))
-            Spaces[position] = currentPlayer;
+        if (currentBoardSpace.PlaceMarker(currentPlayerMarker))
+            Spaces[position] = currentPlayerMarker;
         else
             return;
 
@@ -81,10 +80,6 @@ public class Board : MonoBehaviour
     public void Evaluate()
     {
         // Check game state
-
-        // Check for win
-
-        // TODO Fix mess
 
         // Horizontal
         for (int i = 0; i < 7; i+=3)

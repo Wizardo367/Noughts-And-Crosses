@@ -7,6 +7,9 @@ public enum GameMode { Single, TwoPlayer }
 public class Manager : MonoBehaviour
 {
     // External variables
+    [SerializeField] private Player _player1;
+    [SerializeField] private Player _player2;
+
     [SerializeField] private Text _xScoreText;
     [SerializeField] private Text _oScoreText;
     [SerializeField] private Text _currentPlayerText;
@@ -47,7 +50,7 @@ public class Manager : MonoBehaviour
         }
     }
 
-    public Marker CurrentPlayer { get; private set; }
+    public Player CurrentPlayer { get; private set; }
 
     private string _gameStatus;
     public string GameStatus
@@ -80,7 +83,10 @@ public class Manager : MonoBehaviour
     private void Start()
     {
         // Set variables
-        CurrentPlayer = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
+        Marker startingMarker = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
+        _player1.Marker = startingMarker;
+        _player2.Marker = _player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
+        CurrentPlayer = _player2;
         SwapPlayer();
 
         // Get components
@@ -131,18 +137,23 @@ public class Manager : MonoBehaviour
     public void SwapPlayer()
     {
         // Update variable and text
-        if (CurrentPlayer == Marker.Cross)
+        if (CurrentPlayer.Marker == Marker.Cross)
         {
-            CurrentPlayer = Marker.Nought;
             _currentPlayerText.color = _noughtColour;
             _currentPlayerText.text = "Noughts";
         }
         else
         {
-            CurrentPlayer = Marker.Cross;
             _currentPlayerText.color = _crossColour;
             _currentPlayerText.text = "Crosses";
         }
+
+        // Swap players
+        CurrentPlayer = CurrentPlayer.gameObject.name == "Player1" ? _player2 : _player1;
+
+        // Check if new player is automated, if so, make a move
+        if (CurrentPlayer.Automated)
+            CurrentPlayer.AutoMove();
     }
 
     public void ToggleAudio()
