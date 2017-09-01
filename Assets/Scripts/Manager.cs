@@ -26,7 +26,7 @@ public class Manager : MonoBehaviour
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
     public bool GameOver; 
-    public static GameMode GameMode = GameMode.SinglePlayer;
+    public static GameMode GameMode = GameMode.TwoPlayer;
 
     private int _xScore;
     public int XScore

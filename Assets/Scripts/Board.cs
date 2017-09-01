@@ -101,10 +101,10 @@ public class Board : MonoBehaviour
                     GameOver(currentPlayer.Marker + " Wins!");
 
                 // Update score
-                if (currentPlayer.Marker == Marker.Cross)
-                    _manager.XScore++;
+                if (currentPlayer == _manager.Player1)
+                    currentPlayer.Score++;
                 else
-                    _manager.OScore++;
+                    _manager.Player2.Score++;
 
                 break;
             case GameState.Lose:
@@ -114,10 +114,10 @@ public class Board : MonoBehaviour
                     GameOver(currentPlayer.Marker + " Wins!");
 
                 // Update score
-                if (_manager.Player2.Marker == Marker.Cross)
-                    _manager.XScore++;
+                if (currentPlayer == _manager.Player2)
+                    currentPlayer.Score++;
                 else
-                    _manager.OScore++;
+                    _manager.Player1.Score++;
 
                 break;
         }
