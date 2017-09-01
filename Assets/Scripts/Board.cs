@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameState { None, Tie, Lose, Win }
 public enum Marker { None, Cross, Nought }
 
 public class Board : MonoBehaviour
@@ -80,14 +83,67 @@ public class Board : MonoBehaviour
     public void Evaluate()
     {
         // Check game state
+        GameMode gameMode = Manager.GameMode;
+        GameState gameState = Process(_manager.Player1.Marker);
+        Player currentPlayer = _manager.CurrentPlayer;
+
+        // TODO Fix repeated code
+
+        switch (gameState)
+        {
+            case GameState.Tie:
+                GameOver("Tie");
+                break;
+            case GameState.Win:
+                if (gameMode == GameMode.SinglePlayer)
+                    GameOver("You Win!");
+                else
+                    GameOver(currentPlayer.Marker + " Wins!");
+
+                // Update score
+                if (currentPlayer.Marker == Marker.Cross)
+                    _manager.XScore++;
+                else
+                    _manager.OScore++;
+
+                break;
+            case GameState.Lose:
+                if (gameMode == GameMode.SinglePlayer)
+                    GameOver("You Lose!");
+                else
+                    GameOver(currentPlayer.Marker + " Wins!");
+
+                // Update score
+                if (_manager.Player2.Marker == Marker.Cross)
+                    _manager.XScore++;
+                else
+                    _manager.OScore++;
+
+                break;
+        }
+    }
+
+    private void GameOver(string msg)
+    {
+        _manager.GameStatus = msg;
+        _manager.GameOver = true;
+    }
+
+    //public List<BoardSpace[]> GeneratePossibleStates()
+    //{
+
+    //}
+
+    public GameState Process(Marker perspective)
+    {
+        // Return game state
 
         // Horizontal
-        for (int i = 0; i < 7; i+=3)
+        for (int i = 0; i < 7; i += 3)
             if ((Spaces[i] == Marker.Cross || Spaces[i] == Marker.Nought) &&
                 Spaces[i] == Spaces[i + 1] && Spaces[i + 1] == Spaces[i + 2])
             {
-                GameOver(Spaces[i] + " Wins!");
-                return;
+                return Spaces[i] == perspective ? GameState.Win : GameState.Lose;
             }
 
         // Vertical
@@ -95,29 +151,23 @@ public class Board : MonoBehaviour
             if ((Spaces[i] == Marker.Cross || Spaces[i] == Marker.Nought) &&
                 Spaces[i] == Spaces[i + 3] && Spaces[i + 3] == Spaces[i + 6])
             {
-                GameOver(Spaces[i] + " Wins!");
-                return;
+                return Spaces[i] == perspective ? GameState.Win : GameState.Lose;
             }
 
         // Diagonal
         if ((Spaces[4] == Marker.Cross || Spaces[4] == Marker.Nought) &&
             (Spaces[0] == Spaces[4] && Spaces[4] == Spaces[8] ||
-            Spaces[2] == Spaces[4] && Spaces[4] == Spaces[6]))
+             Spaces[2] == Spaces[4] && Spaces[4] == Spaces[6]))
         {
-            GameOver(Spaces[4] + " Wins!");
-            return;
+            return Spaces[4] == perspective ? GameState.Win : GameState.Lose;
         }
 
-        // Check for draw
+        // Check for tie
         int occupiedCounter = Spaces.Count(marker => marker == Marker.Cross || marker == Marker.Nought);
 
         if (occupiedCounter == 9)
-            GameOver("Tie");
-    }
+            return GameState.Tie;
 
-    private void GameOver(string msg)
-    {
-        _manager.GameStatus = msg;
-        _manager.GameOver = true;
+        return GameState.None;
     }
 }

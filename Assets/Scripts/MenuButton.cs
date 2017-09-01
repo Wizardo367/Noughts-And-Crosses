@@ -6,7 +6,7 @@ public class MenuButton : MonoBehaviour
     public void StartGame(bool singlePlayer)
     {
         // Set game type
-        Manager.GameType = singlePlayer ? GameMode.Single : GameMode.TwoPlayer;
+        Manager.GameMode = singlePlayer ? GameMode.SinglePlayer : GameMode.TwoPlayer;
         // Load scene
         SceneManager.LoadScene("Game");
     }

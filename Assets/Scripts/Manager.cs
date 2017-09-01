@@ -2,13 +2,13 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum GameMode { Single, TwoPlayer }
+public enum GameMode { SinglePlayer, TwoPlayer }
 
 public class Manager : MonoBehaviour
 {
     // External variables
-    [SerializeField] private Player _player1;
-    [SerializeField] private Player _player2;
+    [SerializeField] public Player Player1;
+    [SerializeField] public Player Player2;
 
     [SerializeField] private Text _xScoreText;
     [SerializeField] private Text _oScoreText;
@@ -26,7 +26,7 @@ public class Manager : MonoBehaviour
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
     public bool GameOver; 
-    public static GameMode GameType = GameMode.Single;
+    public static GameMode GameMode = GameMode.SinglePlayer;
 
     private int _xScore;
     public int XScore
@@ -67,14 +67,6 @@ public class Manager : MonoBehaviour
             // Display text
             _gameStatusText.gameObject.SetActive(true);
 
-            // Update score
-            char winner = _gameStatus[0];
-
-            if (winner == 'C')
-                XScore++;
-            else if (winner == 'N')
-                OScore++;
-
             // Next game
             Invoke("NextGame", 2f);
         }
@@ -84,9 +76,9 @@ public class Manager : MonoBehaviour
     {
         // Set variables
         Marker startingMarker = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
-        _player1.Marker = startingMarker;
-        _player2.Marker = _player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
-        CurrentPlayer = _player2;
+        Player1.Marker = startingMarker;
+        Player2.Marker = Player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
+        CurrentPlayer = Player2;
         SwapPlayer();
 
         // Get components
@@ -149,7 +141,7 @@ public class Manager : MonoBehaviour
         }
 
         // Swap players
-        CurrentPlayer = CurrentPlayer.gameObject.name == "Player1" ? _player2 : _player1;
+        CurrentPlayer = CurrentPlayer.gameObject.name == "Player1" ? Player2 : Player1;
 
         // Check if new player is automated, if so, make a move
         if (CurrentPlayer.Automated)
