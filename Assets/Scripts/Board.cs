@@ -88,33 +88,20 @@ public class Board : MonoBehaviour
         GameState gameState = Process(Spaces, _manager.Player1.Marker);
         Player currentPlayer = _manager.CurrentPlayer;
 
-        // TODO Fix repeated code
-
-        switch (gameState)
+        if (gameState == GameState.Tie)
         {
-            case GameState.Tie:
-                GameOver("Tie");
-                break;
-            case GameState.Win:
-                if (gameMode == GameMode.SinglePlayer)
-                    GameOver("You Win!");
-                else
-                    GameOver(currentPlayer.Marker + " Wins!");
+            GameOver("Tie");
+        }
+        else if (gameState != GameState.None)
+        {
+            // Check who won/lost
+            if (gameMode == GameMode.SinglePlayer)
+                GameOver(gameState == GameState.Win ? "You Win!" : "You Lose!");
+            else
+                GameOver(currentPlayer.Marker + " Wins!");
 
-                // Update score
-                currentPlayer.Score++;
-
-                break;
-            case GameState.Lose:
-                if (gameMode == GameMode.SinglePlayer)
-                    GameOver("You Lose!");
-                else
-                    GameOver(currentPlayer.Marker + " Wins!");
-
-                // Update score
-                currentPlayer.Score++;
-
-                break;
+            // Update score
+            currentPlayer.Score++;
         }
     }
 
