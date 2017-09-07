@@ -7,8 +7,8 @@ public enum GameMode { SinglePlayer, TwoPlayer }
 public class Manager : MonoBehaviour
 {
     // External variables
-    [SerializeField] public Player Player1;
-    [SerializeField] public Player Player2;
+    public Player Player1;
+    public Player Player2;
 
     [SerializeField] private Text _xScoreText;
     [SerializeField] private Text _oScoreText;
@@ -26,7 +26,7 @@ public class Manager : MonoBehaviour
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
     public bool GameOver; 
-    public static GameMode GameMode = GameMode.TwoPlayer;
+    public static GameMode GameMode = GameMode.SinglePlayer;
 
     private int _xScore;
     public int XScore
@@ -74,16 +74,22 @@ public class Manager : MonoBehaviour
 
     private void Start()
     {
+        // Check game mode
+        Player2.Automated = GameMode == GameMode.SinglePlayer;
+
         // Set variables
-        Marker startingMarker = Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
+        Marker startingMarker = UnityEngine.Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
         Player1.Marker = startingMarker;
         Player2.Marker = Player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
-        CurrentPlayer = Player2;
-        SwapPlayer();
+        System.Random random = new System.Random();
+        CurrentPlayer = random.Next(0, 2) == 0 ? Player1 : Player2;
 
         // Get components
         _audioSource = GetComponent<AudioSource>();
         _board = GameObject.Find("Board").GetComponent<Board>();
+
+        // Swap player
+        Invoke("SwapPlayer", 0.1f); // Delay prevents NullReferenceException
     }
 
     /// <summary>
@@ -94,7 +100,6 @@ public class Manager : MonoBehaviour
         // Reset variables
         GameOver = false;
         _gameStatusText.enabled = false;
-        SwapPlayer();
 
         // Check if everything needs to be reset
         if (resetAll)
@@ -114,6 +119,8 @@ public class Manager : MonoBehaviour
     {
         // Reset game properties
         Wipe();
+        // Swap players
+        Invoke("SwapPlayer", 1f); // Delay prevents error
     }
 
     /// <summary>

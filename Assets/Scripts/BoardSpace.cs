@@ -35,8 +35,7 @@ public class BoardSpace : MonoBehaviour
     public bool PlaceMarker(Marker marker)
     {
         // Check if any animations are playing or marker type is none
-        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("BoardSpaceDefault") ||
-            marker == Marker.None)
+        if (marker == Marker.None)
             return false;
 
         // Set marker type

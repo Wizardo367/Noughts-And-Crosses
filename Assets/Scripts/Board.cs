@@ -60,7 +60,8 @@ public class Board : MonoBehaviour
         Evaluate();
 
         // Swap player
-        _manager.SwapPlayer();
+        if (!_manager.GameOver)
+            _manager.SwapPlayer();
     }
 
     public void Clear()
@@ -84,7 +85,7 @@ public class Board : MonoBehaviour
     {
         // Check game state
         GameMode gameMode = Manager.GameMode;
-        GameState gameState = Process(_manager.Player1.Marker);
+        GameState gameState = Process(Spaces, _manager.Player1.Marker);
         Player currentPlayer = _manager.CurrentPlayer;
 
         // TODO Fix repeated code
@@ -101,10 +102,7 @@ public class Board : MonoBehaviour
                     GameOver(currentPlayer.Marker + " Wins!");
 
                 // Update score
-                if (currentPlayer == _manager.Player1)
-                    currentPlayer.Score++;
-                else
-                    _manager.Player2.Score++;
+                currentPlayer.Score++;
 
                 break;
             case GameState.Lose:
@@ -114,10 +112,7 @@ public class Board : MonoBehaviour
                     GameOver(currentPlayer.Marker + " Wins!");
 
                 // Update score
-                if (currentPlayer == _manager.Player2)
-                    currentPlayer.Score++;
-                else
-                    _manager.Player1.Score++;
+                currentPlayer.Score++;
 
                 break;
         }
@@ -129,12 +124,7 @@ public class Board : MonoBehaviour
         _manager.GameOver = true;
     }
 
-    //public List<BoardSpace[]> GeneratePossibleStates()
-    //{
-
-    //}
-
-    public GameState Process(Marker perspective)
+    public static GameState Process(Marker[] Spaces, Marker perspective)
     {
         // Return game state
 
@@ -165,9 +155,6 @@ public class Board : MonoBehaviour
         // Check for tie
         int occupiedCounter = Spaces.Count(marker => marker == Marker.Cross || marker == Marker.Nought);
 
-        if (occupiedCounter == 9)
-            return GameState.Tie;
-
-        return GameState.None;
+        return occupiedCounter == 9 ? GameState.Tie : GameState.None;
     }
 }
