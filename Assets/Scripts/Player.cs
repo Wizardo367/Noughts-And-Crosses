@@ -30,6 +30,13 @@ public class Player : MonoBehaviour
         // Get copy of spaces from board
         Marker[] originalSpaces = _board.Spaces;
 
+        // Check if the middle space is occupied
+        if (originalSpaces[4] == Marker.None)
+        {
+            _board.PlaceMarker(4);
+            return;
+        }
+
         // Find the best move
         int bestValue = -1000;
         int bestMove = -1;
