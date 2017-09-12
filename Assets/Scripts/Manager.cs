@@ -98,7 +98,6 @@ public class Manager : MonoBehaviour
     public void Wipe(bool resetAll = false)
     {
         // Reset variables
-        GameOver = false;
         _gameStatusText.enabled = false;
 
         // Check if everything needs to be reset

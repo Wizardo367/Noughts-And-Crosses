@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using admob;
-using UnityEngine.SceneManagement;
 
 public class AdManager : MonoBehaviour
 {
@@ -22,15 +21,9 @@ public class AdManager : MonoBehaviour
 		// Instantiate admob
 		Admob.Instance().initAdmob(BannerId, "");
 		// Set properties
-		Admob.Instance().setTesting(true);
+		//Admob.Instance().setTesting(true);
 		Admob.Instance().setForChildren(true);
 		// Show ad
 		Admob.Instance().showBannerRelative(AdSize.Banner, AdPosition.BOTTOM_CENTER, 0);
-	}
-
-	public void Start()
-	{
-		// Load menu scene
-		//SceneManager.LoadScene("Menu", LoadSceneMode.Additive);
 	}
 }

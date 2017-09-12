@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -79,6 +80,15 @@ public class Board : MonoBehaviour
         // Play sound effect
         _audioSource.clip = _clearBoardSound;
         _audioSource.Play();
+
+        // Reset GameOver (Use same delay as animation)
+        Invoke("ResetGameOver", 2.0f);
+    }
+
+    private void ResetGameOver()
+    {
+        Debug.Log("HELLO");
+        _manager.GameOver = false;
     }
 
     public void Evaluate()
