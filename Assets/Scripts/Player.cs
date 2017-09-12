@@ -4,15 +4,38 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // External variables
+    // --- External variables
+
+    /// <summary>
+    /// Instance of Board.
+    /// </summary>
     [SerializeField] private Board _board;
+
+    /// <summary>
+    /// Instance of Manager.
+    /// </summary>
     [SerializeField] private Manager _manager;
 
-    // Variables
+    // --- Variables    
+
+    /// <summary>
+    /// Defines whether or not the player is automated.
+    /// </summary>
     public bool Automated;
 
+    /// <summary>
+    /// The player's marker type.
+    /// </summary>
     public Marker Marker;
 
+    // --- Properties
+
+    /// <summary>
+    /// Gets or sets the score.
+    /// </summary>
+    /// <value>
+    /// The score.
+    /// </value>
     public int Score
     {
         get { return Marker == Marker.Cross ? _manager.XScore : _manager.OScore; }
@@ -25,49 +48,15 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AutoMove()
-    {
-        // Get copy of spaces from board
-        Marker[] originalSpaces = _board.Spaces;
+    // --- Functions
 
-        // Check if the middle space is occupied
-        if (originalSpaces[4] == Marker.None)
-        {
-            _board.PlaceMarker(4);
-            return;
-        }
-
-        // Find the best move
-        int bestValue = -1000;
-        int bestMove = -1;
-
-        // Traverse all empty spaces, calling minimax on all of them.
-        for (int i = 0; i < 9; i++)
-        {
-            // Check if the space is empty
-            if (originalSpaces[i] == Marker.None)
-            {
-                // Make the move
-                originalSpaces[i] = Marker;
-                // Check output
-                int moveValue = Minimax(originalSpaces, 0, false);
-                // Undo move
-                originalSpaces[i] = Marker.None;
-
-                // Check if the current move is better than the current
-                if (moveValue > bestValue)
-                {
-                    bestMove = i;
-                    bestValue = moveValue;
-                }
-            }
-        }
-
-        // Make best move
-        if (bestMove >= 0 && bestMove <= 9)
-            _board.PlaceMarker(bestMove);
-    }
-
+    /// <summary>
+    /// The minimax algorithm, used for player automation.
+    /// </summary>
+    /// <param name="spaces">The board spaces.</param>
+    /// <param name="depth">The depth, used internally for recursion.</param>
+    /// <param name="isMax">if set to <c>true</c> [is maximum].</param>
+    /// <returns></returns>
     private int Minimax(Marker[] spaces, int depth, bool isMax)
     {
         // Get the other player's marker
@@ -108,5 +97,60 @@ public class Player : MonoBehaviour
         }
 
         return bestScore;
+    }
+
+    // --- Methods
+
+    /// <summary>
+    /// Performs the next move automatically.
+    /// </summary>
+    public void AutoMove()
+    {
+        // Check for GameOver
+        if (_manager.GameOver)
+        {
+            Invoke("AutoMove", 0.05f);
+            return;
+        }
+
+        // Get copy of spaces from board
+        Marker[] originalSpaces = _board.Spaces;
+
+        // Check if the middle space is occupied
+        if (originalSpaces[4] == Marker.None)
+        {
+            _board.PlaceMarker(4);
+            return;
+        }
+
+        // Find the best move
+        int bestValue = -1000;
+        int bestMove = -1;
+
+        // Traverse all empty spaces, calling minimax on all of them.
+        for (int i = 0; i < 9; i++)
+        {
+            // Check if the space is empty
+            if (originalSpaces[i] == Marker.None)
+            {
+                // Make the move
+                originalSpaces[i] = Marker;
+                // Check output
+                int moveValue = Minimax(originalSpaces, 0, false);
+                // Undo move
+                originalSpaces[i] = Marker.None;
+
+                // Check if the current move is better than the current
+                if (moveValue > bestValue)
+                {
+                    bestMove = i;
+                    bestValue = moveValue;
+                }
+            }
+        }
+
+        // Make best move
+        if (bestMove >= 0 && bestMove <= 9)
+            _board.PlaceMarker(bestMove);
     }
 }

@@ -6,53 +6,88 @@ public enum GameMode { SinglePlayer, TwoPlayer }
 
 public class Manager : MonoBehaviour
 {
-    // External variables
+    // --- External variables
+
+    /// <summary>
+    /// Instance of Player used to define Player 1.
+    /// </summary>
     public Player Player1;
+
+    /// <summary>
+    /// Instance of Player used to define Player 2.
+    /// </summary>
     public Player Player2;
 
-    [SerializeField] private Text _xScoreText;
-    [SerializeField] private Text _oScoreText;
-    [SerializeField] private Text _currentPlayerText;
-    [SerializeField] private Text _gameStatusText;
-
+    /// <summary>
+    /// Instance of Button used to control audio.
+    /// </summary>
     [SerializeField] private Button _audioButton;
 
+    /// <summary>
+    /// Instance of Text used to display the score of X.
+    /// </summary>
+    [SerializeField] private Text _xScoreText;
+
+    /// <summary>
+    /// Instance of Text used to display the score of O.
+    /// </summary>
+    [SerializeField] private Text _oScoreText;
+
+    /// <summary>
+    /// Instance of Text used to display the current player.
+    /// </summary>
+    [SerializeField] private Text _currentPlayerText;
+
+    /// <summary>
+    /// Instance of Text used to display the game's status.
+    /// </summary>
+    [SerializeField] private Text _gameStatusText;
+
+    // --- Variables
+
+    /// <summary>
+    /// Instance of AudioSource.
+    /// </summary>
     private AudioSource _audioSource;
 
-    // Game Variables
+    /// <summary>
+    /// Instance of Board.
+    /// </summary>
     private Board _board;
 
+    /// <summary>
+    /// The colour used for the Cross marker.
+    /// </summary>
     private readonly Color _crossColour = new Color(0f, 114/255f, 188/255f);
+
+    /// <summary>
+    /// The colour used for the nought marker.
+    /// </summary>
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
-    public bool GameOver; 
+    /// <summary>
+    /// Defines the game mode.
+    /// </summary>
     public static GameMode GameMode = GameMode.SinglePlayer;
 
-    private int _xScore;
-    public int XScore
-    {
-        get { return _xScore; }
-        set
-        {
-            // Update score and text
-            _xScore = value;
-            _xScoreText.text = _xScore.ToString();
-        }
-    }
+    /// <summary>
+    /// Used to determine whether or not the game is over.
+    /// </summary>
+    public bool GameOver;
 
-    private int _oScore;
-    public int OScore {
-        get { return _oScore; }
-        set
-        {
-            _oScore = value;
-            _oScoreText.text = _oScore.ToString();
-        }
-    }
-
+    // --- Properties
+    /// <summary>
+    /// The current player.
+    /// </summary>
     public Player CurrentPlayer { get; private set; }
 
+    /// <summary>
+    /// Stores the value of the GameStatus property.
+    /// </summary>
     private string _gameStatus;
+    /// <summary>
+    /// The status of the current game.
+    /// </summary>
     public string GameStatus
     {
         get { return _gameStatus; }
@@ -72,44 +107,41 @@ public class Manager : MonoBehaviour
         }
     }
 
-    private void Start()
+    /// <summary>
+    /// Stores the value of the XScore property.
+    /// </summary>
+    private int _xScore;
+    /// <summary>
+    /// The current score of the player using the X marker.
+    /// </summary>
+    public int XScore
     {
-        // Check game mode
-        Player2.Automated = GameMode == GameMode.SinglePlayer;
-
-        // Set variables
-        Marker startingMarker = UnityEngine.Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
-        Player1.Marker = startingMarker;
-        Player2.Marker = Player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
-        System.Random random = new System.Random();
-        CurrentPlayer = random.Next(0, 2) == 0 ? Player1 : Player2;
-
-        // Get components
-        _audioSource = GetComponent<AudioSource>();
-        _board = GameObject.Find("Board").GetComponent<Board>();
-
-        // Swap player
-        Invoke("SwapPlayer", 0.1f); // Delay prevents NullReferenceException
+        get { return _xScore; }
+        set
+        {
+            // Update score and text
+            _xScore = value;
+            _xScoreText.text = _xScore.ToString();
+        }
     }
 
     /// <summary>
-    /// Resets the board or game.
+    /// Stores the value of the OScore property.
     /// </summary>
-    public void Wipe(bool resetAll = false)
-    {
-        // Reset variables
-        _gameStatusText.enabled = false;
-
-        // Check if everything needs to be reset
-        if (resetAll)
+    private int _oScore;
+    /// <summary>
+    /// The current score of the player using the O marker.
+    /// </summary>
+    public int OScore {
+        get { return _oScore; }
+        set
         {
-            XScore = 0;
-            OScore = 0;
+            _oScore = value;
+            _oScoreText.text = _oScore.ToString();
         }
-
-        // Reset board
-        _board.Clear();
     }
+
+    // --- Methods
 
     /// <summary>
     /// Starts the next game.
@@ -131,7 +163,41 @@ public class Manager : MonoBehaviour
         // Reset game manager
         Wipe(true);
     }
+  
+    /// <summary>
+    /// Returns to the menu.
+    /// </summary>
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene("Menu");
+    }
 
+    /// <summary>
+    /// Tasks undertaken at the start of this instance.
+    /// </summary>
+    private void Start()
+    {
+        // Check game mode
+        Player2.Automated = GameMode == GameMode.SinglePlayer;
+
+        // Set variables
+        Marker startingMarker = UnityEngine.Random.Range(0f, 1f) < 0.5f ? Marker.Cross : Marker.Nought;
+        Player1.Marker = startingMarker;
+        Player2.Marker = Player1.Marker == Marker.Cross ? Marker.Nought : Marker.Cross;
+        System.Random random = new System.Random();
+        CurrentPlayer = random.Next(0, 2) == 0 ? Player1 : Player2;
+
+        // Get components
+        _audioSource = GetComponent<AudioSource>();
+        _board = GameObject.Find("Board").GetComponent<Board>();
+
+        // Swap player
+        Invoke("SwapPlayer", 0.1f); // Delay prevents NullReferenceException
+    }
+
+    /// <summary>
+    /// Swaps the players.
+    /// </summary>
     public void SwapPlayer()
     {
         // Update variable and text
@@ -154,6 +220,9 @@ public class Manager : MonoBehaviour
             CurrentPlayer.AutoMove();
     }
 
+    /// <summary>
+    /// Mute/Unmute the audio.
+    /// </summary>
     public void ToggleAudio()
     {
         // Mute/unmute audio source
@@ -164,8 +233,22 @@ public class Manager : MonoBehaviour
         _audioButton.image.color = muted ? Color.grey : Color.white;
     }
 
-    public void ReturnToMenu()
+    /// <summary>
+    /// Resets the board or game.
+    /// </summary>
+    public void Wipe(bool resetAll = false)
     {
-        SceneManager.LoadScene("Menu");
+        // Reset variables
+        _gameStatusText.enabled = false;
+
+        // Check if everything needs to be reset
+        if (resetAll)
+        {
+            XScore = 0;
+            OScore = 0;
+        }
+
+        // Reset board
+        _board.Clear();
     }
 }

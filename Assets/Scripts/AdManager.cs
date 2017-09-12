@@ -3,17 +3,36 @@ using admob;
 
 public class AdManager : MonoBehaviour
 {
-	// Variables
-	private const string BannerId = "ca-app-pub-6762597481863539/6026430848";
+    // --- Variables
 
-	// Singleton
-	private static AdManager _instance;
-	public static AdManager Instance
+    /// <summary>
+    /// The banner identifier.
+    /// </summary>
+    private const string BannerId = "ca-app-pub-6762597481863539/6026430848";
+
+    // --- Properties
+
+    /// <summary>
+    /// Value of the Instance property.
+    /// </summary>
+    private static AdManager _instance;
+    /// <summary>
+    /// Singleton instance.
+    /// </summary>
+    /// <value>
+    /// The instance.
+    /// </value>
+    public static AdManager Instance
 	{
 		get { return _instance ?? (_instance = new AdManager()); }
 	}
 
-	private void Awake()
+    // --- Methods
+
+    /// <summary>
+    /// Tasks ran at the very start of this instance.
+    /// </summary>
+    private void Awake()
 	{
 		// Prevent object being destroyed
 		DontDestroyOnLoad(gameObject);
