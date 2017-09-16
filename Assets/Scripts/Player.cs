@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
+public enum Difficulty { Easy = 3, Average = 2, Hard = 1, Impossible = 0 }
 
 public class Player : MonoBehaviour
 {
@@ -123,9 +126,12 @@ public class Player : MonoBehaviour
             return;
         }
 
-        // Find the best move
-        int bestValue = -1000;
-        int bestMove = -1;
+        // Key: Move, Value: Score
+        var possibleMoves = new Dictionary<int, int>();
+
+        //// Find the best move
+        //int bestValue = -1000;
+        //int bestMove = -1;
 
         // Traverse all empty spaces, calling minimax on all of them.
         for (int i = 0; i < 9; i++)
@@ -140,17 +146,28 @@ public class Player : MonoBehaviour
                 // Undo move
                 originalSpaces[i] = Marker.None;
 
-                // Check if the current move is better than the current
-                if (moveValue > bestValue)
-                {
-                    bestMove = i;
-                    bestValue = moveValue;
-                }
+                // Add move to dictionary
+                possibleMoves.Add(i, moveValue);
+
+                //// Check if the current move is better than the current
+                //if (moveValue > bestValue)
+                //{
+                //    bestMove = i;
+                //    bestValue = moveValue;
+                //}
             }
         }
 
-        // Make best move
-        if (bestMove >= 0 && bestMove <= 9)
-            _board.PlaceMarker(bestMove);
+        // Sort dictionary
+        var sortedMoves = from entry in possibleMoves orderby entry.Value descending select entry;
+
+        // Make move based on difficulty
+        int moveIndex = Mathf.Clamp(0 + (int) Manager.AIDifficulty, 0, sortedMoves.Count() - 1);
+        int move = sortedMoves.ElementAt(moveIndex).Key;
+        _board.PlaceMarker(move);
+
+        //// Make best move
+        //if (bestMove >= 0 && bestMove <= 9)
+        //    _board.PlaceMarker(bestMove);
     }
 }

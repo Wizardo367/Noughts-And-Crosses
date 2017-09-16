@@ -66,6 +66,11 @@ public class Manager : MonoBehaviour
     private readonly Color _noughtColour = new Color(211/255f, 53/255f, 53/255f);
 
     /// <summary>
+    /// The AI difficulty level.
+    /// </summary>
+    public static Difficulty AIDifficulty = Difficulty.Easy;
+
+    /// <summary>
     /// Defines the game mode.
     /// </summary>
     public static GameMode GameMode = GameMode.SinglePlayer;
